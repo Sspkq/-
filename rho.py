@@ -1,5 +1,6 @@
 #SM3
 import time
+import random
 IV = [0x7380166F, 0x4914B2B9, 0x172442D7, 0xDA8A0600, 0xA96F30BC, 0x163138AA, 0xE38DEE4D, 0xB0FB0E4E]
 
 def ROL(X,i):#循环左移
@@ -96,33 +97,51 @@ def smm3(m):
     pp=Group(p)
     ppp=Iterate(pp)
     result = ''
+    print(ppp)
     for x in ppp:
-        result += (hex(x)[2:]+' ')
+        result += (hex(x)[2:])
     print("对应的杂凑值:",result)
+    return result
 
 
-mmm = input('要压缩的信息:')
-smm3(mmm)
+def decimalToHex(decValue):
+    hex=""
+    while decValue !=0:
+        hexValue=decValue%16   #求余数
+        hex=toHexChar(hexValue)+hex
+        decValue=decValue//16  #求商
+    return hex
 
+def toHexChar(hexValue):
+    if 0<=hexValue<=9:
+        return chr(hexValue+ord('0'))
+    else:
+        return chr(hexValue-10+ord('A'))
 
-
-def biratt(n):
+def rhoo(n):
     x=decimalToHex(random.randint(0,2**512))
-    x1=x
-    x0=x
+    x0=smm3(x)
+    x1=x0.replace(" ","")
+    print("aa",x1)
+    x1=smm3(x1)
+    print("bb",x1)
     for i in range(2**n):
         hexn=n//8
         if(x1[:hexn]==x0[:hexn]):
             x1=x0
             x0=x
             for j in range(i):
+                print('gtj',x0)
+                print('yy',smm3(x0))
+                print('gj',smm3(x0)[:hexn])
                 if(smm3(x0)[:hexn]==smm3(x1)[:hexn]):
-                    print("找到一对碰撞,x0:",x0,"x1:"x1)
+                    print('j:',j)
+                    print("找到一对碰撞,x0:",x0,"x1:",x1)
                     return 0
                 else:
                     x0=smm3(x0)
                     x1=smm3(x1)
 st=time.time()
-biratt(16)
-nd=time,time()
+rhoo(64)#碰撞位数
+nd=time.time()
 print("找到碰撞的时间为",nd-st)
